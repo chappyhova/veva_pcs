@@ -1,0 +1,60 @@
+{% extends "veva_pcs/base.html" %}
+{% block content %}
+
+
+<table class='table'>
+  <thead>
+    <tr>
+      <th scope="col"><h3>Item</h3></th>
+      <th scope="col"><h3>Price</h3></th>
+      <th scope="col"><h3>Quantity</h3></th>
+    </tr>
+  </thead>
+  <tfoot>
+    <td></td>
+    <td></td>
+    <td><p>Total: £{{ basket.total }}</p></td>
+  </tfoot>
+  <tbody>
+    {% for item in basket.basketitem_set.all %}
+      <td><p>{{ item.product }}</p></td>
+      <td><p>£{{ item.product.price }}</p></td>
+      <td><p>{{ item.quantity }}</p></td>
+      <td><a href='{% url "update_basket" item.product.slug %}?qty=0'>Remove</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script src="https://www.paypal.com/sdk/js?client-id=AWYRGG1p2eKmg9M3Q_exHVN6Vm6UD6Sq6-WkJzanhbEeJjhLQz8LkKsCjtnWNzZ7VhUylhDG6ui0QJSV&currency=GBP"></script>
+
+<div id="paypal-button-container"></div>
+
+<script>
+    paypal.Buttons({
+      style: {
+        color: 'silver',
+        shape: 'pill',
+        size: 'large',
+      },
+    createOrder: function(data, actions) {
+      // This function sets up the details of the transaction, including the amount and line item details.
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: "{{ basket.total }}"
+          }
+        }]
+      });
+    },
+    onApprove: function(data, actions) {
+      // This function captures the funds from the transaction.
+      return actions.order.capture().then(function(details) {
+        // This function shows a transaction success message to your buyer.
+        alert('Transaction completed by ' + details.payer.name.given_name);
+      });
+    }
+  }).render('#paypal-button-container');
+  //This function displays Smart Payment Buttons on your web page.
+</script>
+
+{% endblock content %}

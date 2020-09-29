@@ -1,0 +1,16 @@
+{% extends "veva_pcs/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div>
+    <h1>{{ object.name }}</h1>
+    <p>{{ object.description|safe }}</p>
+    <h2>£{{ object.price }}</h2>
+    <form method='GET' action='{% url "update_basket" object.slug %}'>
+        {% csrf_token %}
+        <div class='form-group'>
+            {% crispy quantity_form %}
+            <input type="submit" class="btn btn-primary" value='Add to Basket'>
+        </div>
+    </form>
+</div>
+{% endblock content %}
